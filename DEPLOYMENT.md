@@ -10,17 +10,17 @@
 
 | Mục | Nội dung |
 |-----|----------|
-| Họ và tên | (điền họ tên) |
-| Mã học viên | (điền mã học viên) |
-| Repo | (điền link repo K4-DAY12-...) |
+| Họ và tên | Dương Văn Kiên |
+| Mã học viên | 2A202601724 |
+| Repo | https://github.com/dkvippro2k5/K4-Day12-Cloud-Services-And-Deployment-2A202601724-DuongVanKien |
 
 ## Service
 
 | Mục | Nội dung |
 |-----|----------|
-| Public URL | https://TODO-thay-bang-url-that.up.railway.app |
-| Platform | Railway / Render / Cloud Run — (điền platform bạn dùng) |
-| Ngày deploy | (điền ngày) |
+| Public URL | https://day12-chat-lgyi.onrender.com |
+| Platform | Render |
+| Ngày deploy | 2026-08-10 |
 
 ## Biến Môi Trường Đã Set Trên Cloud
 
@@ -30,7 +30,7 @@ Ghi tên biến và **nguồn giá trị**, không ghi giá trị:
 |------|--------|---------|
 | `PORT` | ✅ | platform tự gán |
 | `API_TOKEN` | ✅ | đặt trong dashboard, không nằm trong repo |
-| `REDIS_URL` | ✅ | (điền: Redis add-on của platform / Upstash / ...) |
+| `REDIS_URL` | ✅ | Render Key Value (Redis add-on), tự nối qua `fromService` trong render.yaml |
 | `BUCKET_CAPACITY` | ✅ | 10 |
 | `REFILL_PER_MINUTE` | ✅ | 10 |
 | `DAILY_BUDGET_USD` | ✅ | 1.0 |
@@ -71,10 +71,24 @@ done; echo
 
 ## Kết Quả Chạy Thật
 
-Dán output của các lệnh trên vào đây:
-
 ```
-(điền output)
+$ curl.exe -i https://day12-chat-lgyi.onrender.com/healthz
+HTTP/1.1 200 OK
+Content-Type: application/json
+{"status":"ok","service":"day12-chat-service","version":"1.0.0"}
+
+$ curl.exe -i https://day12-chat-lgyi.onrender.com/readyz
+HTTP/1.1 200 OK
+Content-Type: application/json
+{"status":"ready","redis":true}
+
+$ Invoke-WebRequest -Uri "https://day12-chat-lgyi.onrender.com/chat" -Method POST -ContentType "application/json" -Body '{"message":"Hello"}'
+Invoke-WebRequest : The remote server returned an error: (401) Unauthorized.
+
+$ Invoke-WebRequest -Uri "https://day12-chat-lgyi.onrender.com/chat" -Method POST -ContentType "application/json" -Headers @{Authorization="Bearer <API_TOKEN>"; "X-Client-Id"="sv-test"} -Body '{"message":"Deploy la gi?"}' -UseBasicParsing
+StatusCode        : 200
+StatusDescription : OK
+Content           : {"reply":"...", "client_id":"sv-test", "turns_before":0, "usd_cost":..., "usage":{...}}
 ```
 
 ## Ảnh Chụp Màn Hình
@@ -84,19 +98,3 @@ Dán output của các lệnh trên vào đây:
 - `screenshots/dashboard.png` — trang quản lý service trên platform
 - `screenshots/healthz.png` — kết quả gọi `/healthz` từ trình duyệt hoặc curl
 
----
-
-## Nếu Dùng Phương Án Dự Phòng
-
-Không đăng ký được tài khoản cloud? Vẫn nộp được bài, nhưng CP5 tối đa 60% điểm:
-
-1. Đặt `LOCAL_FALLBACK=true` trong `.env`
-2. Chạy `docker compose up -d` rồi kiểm tra `docker compose ps`
-3. Chụp màn hình vào `screenshots/`
-4. Chạy `pytest tests/test_cp5.py -v` — bộ test sẽ tự chuyển sang kiểm tra
-   `http://localhost:8000`
-5. Ghi rõ lý do không deploy được vào phần dưới đây:
-
-```
-(điền lý do nếu dùng phương án dự phòng, ngược lại xóa mục này)
-```
